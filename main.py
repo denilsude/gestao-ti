@@ -24,7 +24,7 @@ def tela_inicial():
     frame.pack(fill="both", expand=True)
     
     # Cabeçalho
-    header = tk.Frame(frame, bg="#026440", pady=10)  # Verde intermediário para destaque
+    header = tk.Frame(frame, bg="#026440", pady=10)  # Verdee intermediário para destaque
     header.pack(fill="x")
     
     label_titulo = tk.Label(header, text="Gestão de acesso Tecnologia - 3246", font=("Arial", 22, "bold"), bg="#026440", fg="white")
@@ -35,9 +35,8 @@ def tela_inicial():
     main_frame.pack(pady=20)
     
     botoes = [
-        ("Colaboradores", cadastrar_ou_alterar_funcionario, "#008F68"),  # Verde Sicoob atualizado
+        ("Coolaboradores", cadastrar_ou_alterar_funcionario, "#008F68"),  # Verde Sicoob atualizado
         ("Acessar UEM", pesquisar_funcionario, "#00B386"),  # Verde mais vibrante
-        #("UEM Totem/PC", pesquisar_pc, "#008F60"),  # Verde pastel mais equilibrado
         ("Checklist Admissão", checklist_admissao, "#00997B"),  # Verde azulado atualizado
         ("Checklist Demissão", checklist_desligamento, "#00997B"),  # Verde azulado atualizado
         ("Grupo de Acesso", grupo_acesso, "#008386"), # Verde pastel mais vibrante
@@ -1028,44 +1027,7 @@ def salvar_checklist_a(observacoesa):
     messagebox.showinfo("Sucesso","Checklist salvo com sucesso!")
     tela_inicial()
 
-# Função que move o funcionário da aba Funcionarios para Inativos
-#def mover_para_inativos(nome_funcionario):
- #   if not os.path.exists(CAMINHO_ARQUIVO):
-  #      messagebox.showerror("Erro", f"Arquivo '{CAMINHO_ARQUIVO}' não encontrado.")
-   #     return
 
-    #wb = load_workbook(CAMINHO_ARQUIVO)
-    #if ABA_ORIGEM not in wb.sheetnames:
-     #   messagebox.showerror("Erro", f"Aba '{ABA_ORIGEM}' não encontrada.")
-      #  return
-
-    #ws_origem = wb[ABA_ORIGEM]
-    #dados = list(ws_origem.values)
-    #header = dados[0]
-    #linhas = dados[1:]
-
-    #linha_funcionario = None
-    #for i, linha in enumerate(linhas, start=2):  # começa da linha 2
-     #   if nome_funcionario.lower() in str(linha[1]).lower():  # Coluna 2 (índice 1) = Nome
-      #      linha_funcionario = (i, linha)
-       #     break
-
-    #if not linha_funcionario:
-     #   messagebox.showwarning("Atenção", f"Funcionário '{nome_funcionario}' não encontrado na aba '{ABA_ORIGEM}'.")
-      #  return
-
-    # Criar aba Inativos se não existir
-    ###  ws_destino.append(header)
-    #else:
-     #   ws_destino = wb[ABA_DESTINO]
-
-    # Copia e remove
-    #ws_destino.append(linha_funcionario[1])
-    #ws_origem.delete_rows(linha_funcionario[0], 1)
-
-    #wb.save(CAMINHO_ARQUIVO)
-    #messagebox.showinfo("Sucesso", f"Funcionário '{nome_funcionario}' movido para a aba'Inativos'.")
-    #tela_inicial()
 # Função principal da tela de checklist
 def checklist_desligamento():
     limpar_tela()
@@ -1087,7 +1049,6 @@ def checklist_desligamento():
           
     # Campo de exibição do nome encontrado (somente leitura)
     global entry_nome
-    #tk.Label(frame, text="Funcionário encontrado:", font=("Arial", 14), bg="#003D1F", fg="white").pack(pady=(10, 0))
     entry_nome = tk.Entry(frame, font=("Arial", 12), width=50, state="readonly")
     entry_nome.pack(pady=5)
 
@@ -1172,7 +1133,6 @@ def checklist_desligamento():
     for i, (text, command, color) in enumerate(botoes):
         tk.Button(botoes_frame, text=text, font=("Arial", 12, "bold"), width=20, height=2, bg=color, fg="white", relief="ridge", bd=3, command=command).grid(row=0, column=i, padx=10)
 
-    #tk.Button(frame, text="Salvar Checklist e Mover para Inativos", font=("Arial", 14, "bold"), bg="#008F68", fg="white", command=ao_clicar_salvar).pack(pady=10)
 
 def salvar_dados(entries):
     dados = {campo: entry.get() for campo, entry in entries.items()}
@@ -1417,27 +1377,8 @@ def checklist_admissao():
     frame.pack(fill="both", expand=True)
 
     tk.Label(frame, text="Checklist de Admissão", font=("Arial", 18, "bold"), bg="#026440", fg="white", pady=10).pack(fill="x")
-
-    #Campo de pesquisa (nome, CPF, e-mail ou login)
-    #global entry_pesquisa
-    #linha_pesquisa = tk.Frame(frame, bg="#003D1F")
-    #linha_pesquisa.pack(pady=(10, 0))
-
-    #tk.Label(linha_pesquisa, text="Digite:", font=("Arial", 14, "bold"), bg="#003D1F", fg="white").pack(side="left", padx=(0, 10))
-
-    #entry_pesquisa = tk.Entry(linha_pesquisa, font=("Arial", 12), width=42)
-    #entry_pesquisa.pack(side="left")
-  #  entry_pesquisa.bind("<Return>", lambda event: buscar_funcionario_checklist_admissao())
-          
-    #Campo de exibição do nome encontrado (somente leitura)
-    #global entry_nome
-    #entry_nome = tk.Entry(frame, font=("Arial", 12), width=50, state="readonly")
-    #entry_nome.pack(pady=5)
-    # Nomess (label + text box na mesma linha)
-    # Frame para responsável + Nomess lado a lado
     info_frame = tk.Frame(frame, bg="#003D1F")
     info_frame.pack(pady=10)
-
     global text_observacoesa
     tk.Label(info_frame, text="Digite o nome completo:", font=("Arial", 14), bg="#003D1F", fg="white").grid(row=0, column=0, sticky="we", padx=(0,10), pady=(10, 0))
     text_observacoesa = tk.Text(info_frame, width=55, height=1, font=("Arial", 12), wrap="word", bd=3, relief="ridge")
@@ -1488,20 +1429,13 @@ def checklist_admissao():
     info_frame = tk.Frame(frame, bg="#003D1F")
     info_frame.pack(pady=10)
     
-    # Nomess (label + text box na mesma linha)
-    #global text_observacoesa
-    ##tk.Label(info_frame, text="Nomess:", font=("Arial", 14), bg="#003D1F", fg="white").grid(row=1, column=0, sticky="ne", padx=(0,10), pady=(10, 0))
-    #text_observacoesa = tk.Text(info_frame, width=55, height=1, font=("Arial", 12), wrap="word", bd=3, relief="ridge")
-    #text_observacoesa.grid(row=1, column=1, sticky="w", pady=(10, 0))
-        
+       
     def ao_clicar_salvar():
-        #nome = entry_nome.get().strip()
         observacoesa = text_observacoesa.get("1.0", "end").strip()  # <-- Captura o texto digitado
         if not observacoesa:
             messagebox.showwarning("Atenção", "Por favor, digite o nome do funcionário.")
             return
         salvar_checklist_a(observacoesa)
-        #mover_para_inativos(nome)
     # Frame para botões
     botoes_frame = tk.Frame(frame, bg="#003D1F")
     botoes_frame.pack(pady=20)
@@ -1516,7 +1450,6 @@ def checklist_admissao():
     for i, (text, command, color) in enumerate(botoes):
         tk.Button(botoes_frame, text=text, font=("Arial", 12, "bold"), width=20, height=2, bg=color, fg="white", relief="ridge", bd=3, command=command).grid(row=0, column=i, padx=10)
 
-    #tk.Button(frame, text="Salvar Checklist e Mover para Inativos", font=("Arial", 14, "bold"), bg="#008F68", fg="white", command=ao_clicar_salvar).pack(pady=10)
 
 def salvar_dados(entries):
     dados = {campo: entry.get() for campo, entry in entries.items()}
@@ -1554,42 +1487,6 @@ def salvar_em_excel(dados, arquivo):
             cell.fill = fill
     
     wb.save(arquivo)
-#def buscar_funcionario_checklist_admissao():
- #   termo_busca = entry_pesquisa.get().strip()
-
-  #  if not termo_busca:
-   #     messagebox.showwarning("Aviso", "Digite um nome, CPF, e-mail ou login para buscar.")
-    #    return
-
-    #CAMINHO_ARQUIVO = "funcionarios.xlsx"
-
-    #try:
-     #   df_funcionarios = pd.read_excel(CAMINHO_ARQUIVO, sheet_name="Ativos")
-
-        # Faz busca em várias colunas
-      #  encontrados = df_funcionarios[
-       #     df_funcionarios.apply(lambda row: termo_busca.lower() in str(row).lower(), axis=1)
-        #]
-
-        #if len(encontrados) == 0:
-         #   messagebox.showerror("Erro", f"Nenhum funcionário encontrado com o termo '{termo_busca}'.")
-        #elif len(encontrados) > 1:
-         #   nomes = "\n- " + "\n- ".join(encontrados["Nome"].tolist())
-          #  messagebox.showerror("Erro", f"Mais de um funcionário encontrado com o termo '{termo_busca}':{nomes}\n\nRefine a busca.")
-        #else:
-         #   funcionario = encontrados.iloc[0]
-          #  nome_encontrado = funcionario["Nome"]
-
-            # Exibe no campo readonly
-           # entry_nome.config(state="normal")
-            #entry_nome.delete(0, tk.END)
-            #entry_nome.insert(0, nome_encontrado)
-            #entry_nome.config(state="readonly")
-
-            #messagebox.showinfo("Sucesso", f"Funcionário encontrado: {nome_encontrado}")
-
-    #except Exception as e:
-     #   messagebox.showerror("Erro", f"Falha ao acessar os dados dos funcionários:\n{e}")
 # Variáveis globais
 df_admissaos_global = None
 usuario_index_admissao = None
@@ -1789,17 +1686,6 @@ def buscar_funcionario_grupo():
 
     except Exception as e:
         messagebox.showerror("Erro", f"Falha ao acessar os dados dos funcionários:\n{e}")
-
-#def criar_tabela(frame):
- #   colunas = ["CPF", "Nome", "Computador", "IP", "MAC", "Login", "E-mail", "Prognum", "Consórcio", "PA", "Setor", "Cargo"]
-  #  tree = ttk.Treeview(frame, columns=colunas, show="headings", height=10)
-    
-   # for coluna in colunas:
-    #    tree.heading(coluna, text=coluna)
-     #   tree.column(coluna, width=120, anchor="center")
-    
-    #tree.pack(expand=True, fill="both")
-    #return tree
 
 
 # Configuração inicial da janela
