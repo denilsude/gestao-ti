@@ -35,7 +35,7 @@ def tela_inicial():
     main_frame.pack(pady=20)
     
     botoes = [
-        ("Coolaboradores", cadastrar_ou_alterar_funcionario, "#008F68"),  # Verde Sicoob atualizado
+        ("Colaboradores", cadastrar_ou_alterar_funcionario, "#008F68"),  # Verde Sicoob atualizado
         ("Acessar UEM", pesquisar_funcionario, "#00B386"),  # Verde mais vibrante
         ("Checklist Admissão", checklist_admissao, "#00997B"),  # Verde azulado atualizado
         ("Checklist Demissão", checklist_desligamento, "#00997B"),  # Verde azulado atualizado
