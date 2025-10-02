@@ -4,9 +4,18 @@ import tkinter as tk
 from tkinter import PhotoImage, messagebox, ttk
 from openpyxl import load_workbook
 from openpyxl.styles import Font, PatternFill
+from concurrent.futures import ThreadPoolExecutor
 import webbrowser
 import unicodedata
 import re
+import subprocess
+import platform
+import threading
+import socket
+import time
+import csv
+
+
 
 def limpar_tela():
     for widget in root.winfo_children():
@@ -35,17 +44,36 @@ def tela_inicial():
     main_frame.pack(pady=20)
     
     botoes = [
-        ("Colaboradores", cadastrar_ou_alterar_funcionario, "#008F68"),  # Verde Sicoob atualizado
-        ("Acessar UEM", pesquisar_funcionario, "#00B386"),  # Verde mais vibrante
-        ("Checklist Admissão", checklist_admissao, "#00997B"),  # Verde azulado atualizado
-        ("Checklist Demissão", checklist_desligamento, "#00997B"),  # Verde azulado atualizado
-        ("Grupo de Acesso", grupo_acesso, "#008386"), # Verde pastel mais vibrante
-        ("Relatórios", relatorio_geral, "#66CDAA")  # Verde pastel mais equilibrado
-                
+        ("Colaboradores", cadastrar_ou_alterar_funcionario, "#008F68"),
+        ("Acessar UEM", pesquisar_funcionario, "#00B386"),
+        ("Checklist Admissão", checklist_admissao, "#00997B"),
+        ("Checklist Demissão", checklist_desligamento, "#00997B"),
+        ("Grupo de Acesso", grupo_acesso, "#008386"),
+        ("Ip Scanner", varredura_ip, "#008386"),
+        ("Relatórios", relatorio_geral, "#66CDAA")
     ]
-    
-    for text, command, color in botoes:
-        tk.Button(main_frame, text=text, font=("Arial", 14, "bold"), width=25, height=2, bg=color, fg="white", relief="ridge", bd=3, command=command).pack(pady=10)
+
+    # Criar botões em 2 colunas
+    for i, (text, command, color) in enumerate(botoes):
+        row = i // 2   # Linha (vai mudando a cada 2 botões)
+        col = i % 2    # Coluna (0 ou 1)
+        
+        tk.Button(
+            main_frame,
+            text=text,
+            font=("Arial", 14, "bold"),
+            width=25,
+            height=2,
+            bg=color,
+            fg="white",
+            relief="ridge",
+            bd=3,
+            command=command
+        ).grid(row=row, column=col, padx=15, pady=15)
+
+    # Centralizar as colunas
+    main_frame.grid_columnconfigure(0, weight=1)
+    main_frame.grid_columnconfigure(1, weight=1)
     
     # Rodapé
     footer = tk.Frame(frame, bg="#026440", pady=5)
@@ -80,7 +108,7 @@ def cadastrar_ou_alterar_funcionario():
     DOMINIO_FIXO = ""
 
     def verificar_duplicidade(event=None):
-        caminho_arquivo = "funcionarios.xlsx"  # ajuste se necessário
+        caminho_arquivo = os.path.join("Y:\\Tecnologia", "Programa gestão tecnologia", "funcionarios.xlsx")  # ajuste se necessário
 
         if not os.path.exists(caminho_arquivo):
             return
@@ -363,7 +391,7 @@ def cadastrar_ou_alterar_funcionario():
 
     # Setor
     setor_var = tk.StringVar()
-    valores_setor = [" ", "Administrativo", "Advocacia", "Cadastro", "Crédito", "Cobrança", "Comercial", "Conselho","Controladoria", "Diretoria", "Financeiro", "Secretária", "Gente e Gestão", "Marketing", "Produtos", "Tecnologia","Superitendencia", "Sustentabilidade", "Riscos e Controles"]
+    valores_setor = [" ", "Administrativo", "Advocacia", "Cadastro", "Crédito", "Cobrança", "Comercial", "Conselho","Controladoria", "Diretoria", "Financeiro", "Financeiro UAD", "Secretária", "Gente e Gestão", "Marketing", "Produtos", "Tecnologia","Superitendencia", "Sustentabilidade", "Riscos e Controles"]
     tk.Label(form_frame, text="Setor:", font=("Arial", 12, "bold"), bg="#003D1F", fg="white", anchor="w")\
     .grid(row=linha_base + 1, column=2, sticky="w", padx=10, pady=5)
 
@@ -379,7 +407,7 @@ def cadastrar_ou_alterar_funcionario():
             
             return
 
-        arquivo = "funcionarios.xlsx"
+        arquivo = os.path.join("Y:\\Tecnologia", "Programa gestão tecnologia", "funcionarios.xlsx")
         if os.path.exists(arquivo):
 
             df = pd.read_excel(arquivo, dtype=str).fillna("")
@@ -430,7 +458,7 @@ def cadastrar_ou_alterar_funcionario():
         if not confirmacao:
             return
 
-        arquivo = "funcionarios.xlsx"
+        arquivo = os.path.join("Y:\\Tecnologia", "Programa gestão tecnologia", "funcionarios.xlsx")
         if os.path.exists(arquivo):
             df = pd.read_excel(arquivo, dtype=str).fillna("")
             df_filtrado = df[df["CPF"].str.replace(r'\D', '', regex=True) != cpf_numerico]
@@ -455,7 +483,7 @@ def cadastrar_ou_alterar_funcionario():
             messagebox.showerror("Erro", "Todos os campos devem ser preenchidos!")
             return
 
-        arquivo = "funcionarios.xlsx"
+        arquivo = os.path.join("Y:\\Tecnologia", "Programa gestão tecnologia", "funcionarios.xlsx")
         if os.path.exists(arquivo):
             # Lê todas as abas
             all_sheets = pd.read_excel(arquivo, sheet_name=None, dtype=str)
@@ -531,7 +559,7 @@ def grupo_acesso():
     entry_login.pack(pady=5)
 
     # Carrega grupos do Excel
-    arquivo = "funcionarios.xlsx"
+    arquivo = os.path.join("Y:\\Tecnologia", "Programa gestão tecnologia", "funcionarios.xlsx")
     grupos = {}
 
     if os.path.exists(arquivo):
@@ -677,7 +705,7 @@ def pesquisar_funcionario():
             messagebox.showerror("Erro", "Digite um termo para pesquisa!")
             return
 
-        arquivo = "funcionarios.xlsx"
+        arquivo = os.path.join("Y:\\Tecnologia", "Programa gestão tecnologia", "funcionarios.xlsx")
         if os.path.exists(arquivo):
             try:
                 # Ler as abas "Ativos" e "PC"
@@ -711,6 +739,159 @@ def pesquisar_funcionario():
 
     for i, (text, command, color) in enumerate(botoes):
         tk.Button(botoes_frame, text=text, font=("Arial", 12, "bold"), width=20, height=2, bg=color, fg="white", relief="ridge", bd=3, command=command).grid(row=0, column=i, padx=10)
+
+def ping_ip(ip):
+    param = "-n" if platform.system().lower() == "windows" else "-c"
+    comando = ["ping", param, "1", ip]
+    try:
+        subprocess.check_output(comando, stderr=subprocess.DEVNULL, universal_newlines=True, timeout=1)
+        return True
+    except subprocess.CalledProcessError:
+        return False
+    except subprocess.TimeoutExpired:
+        return False
+
+def obter_hostname(ip):
+    try:
+        return socket.gethostbyaddr(ip)[0]
+    except socket.herror:
+        return ""
+    
+def varredura_ip():
+    limpar_tela()
+
+    frame = tk.Frame(root, padx=20, pady=20, bg="#003D1F")
+    frame.pack(fill="both", expand=True)
+
+    label_titulo = tk.Label(frame, text="Varredura de IP na Rede", font=("Arial", 18, "bold"), bg="#026440", fg="white", padx=10, pady=10)
+    label_titulo.pack(fill="x", pady=10)
+
+    # Campo faixa IP
+    instrucao = tk.Label(frame, text="Informe a faixa de IP (ex: 10.201.60.1-10.201.60.254):", font=("Arial", 12), bg="#003D1F", fg="white")
+    instrucao.pack(pady=5)
+    entry_faixa = tk.Entry(frame, width=40, font=("Arial", 12), bd=3, relief="ridge", bg="#E8F5E9")
+    entry_faixa.pack(pady=5, ipady=3)
+
+    # Campo filtro hostname
+    filtro_label = tk.Label(frame, text="Filtrar por Hostname (opcional):", font=("Arial", 12), bg="#003D1F", fg="white")
+    filtro_label.pack(pady=5)
+    entry_filtro = tk.Entry(frame, width=40, font=("Arial", 12), bd=3, relief="ridge", bg="#E8F5E9")
+    entry_filtro.pack(pady=5, ipady=3)
+
+    # Barra de progresso
+    progress_var = tk.DoubleVar()
+    progress = ttk.Progressbar(frame, variable=progress_var, maximum=100)
+    progress.pack(fill="x", pady=10)
+
+    # Tabela Treeview
+    tree_frame = tk.Frame(frame, bg="#003D1F")
+    tree_frame.pack(fill="both", expand=True, pady=10)
+
+    tree_scroll = tk.Scrollbar(tree_frame)
+    tree_scroll.pack(side="right", fill="y")
+
+    tree = ttk.Treeview(tree_frame, columns=("IP", "Host"), show="headings", yscrollcommand=tree_scroll.set)
+    tree.heading("IP", text="Endereço IP")
+    tree.heading("Host", text="Hostname")
+    tree.column("IP", width=150)
+    tree.column("Host", width=300)
+    tree.pack(fill="both", expand=True)
+
+    # Logs detalhados
+    log_frame = tk.Frame(frame)
+    log_frame.pack(fill="both", expand=False, pady=5)
+    
+    text_log_scroll = tk.Scrollbar(log_frame)
+    text_log_scroll.pack(side="right", fill="y")
+
+    text_log = tk.Text(log_frame, height=10, bg="black", fg="lime", font=("Courier", 10), yscrollcommand=text_log_scroll.set)
+    text_log.pack(fill="both", expand=True)
+
+    text_log_scroll.config(command=text_log.yview)
+
+    btn_frame = tk.Frame(frame, bg="#003D1F")
+    btn_frame.pack(pady=10)
+
+    resultado = []
+
+    def log(msg):
+        text_log.insert("end", msg + "\n")
+        text_log.see("end")  # Scroll automático
+
+    def iniciar_varredura():
+        faixa = entry_faixa.get().strip()
+        filtro = entry_filtro.get().strip().lower()
+        for i in tree.get_children():
+            tree.delete(i)
+        resultado.clear()
+        progress_var.set(0)
+        text_log.delete("1.0", "end")
+
+        if "-" not in faixa:
+            messagebox.showerror("Erro", "Informe a faixa corretamente (ex: 192.168.1.1-192.168.1.254).")
+            return
+
+        ip_inicio, ip_fim = faixa.split("-")
+        partes_inicio = ip_inicio.strip().split(".")
+        partes_fim = ip_fim.strip().split(".")
+        if partes_inicio[:-1] != partes_fim[:-1]:
+            messagebox.showerror("Erro", "O intervalo deve estar na mesma sub-rede.")
+            return
+
+        prefixo = ".".join(partes_inicio[:-1]) + "."
+        ini = int(partes_inicio[-1])
+        fim = int(partes_fim[-1])
+        total = fim - ini + 1
+
+        encontrados = []
+
+        def escanear_ip(i):
+            ip = prefixo + str(i)
+            log(f"Pinging {ip}...")
+            if ping_ip(ip):
+                host = obter_hostname(ip)
+                log(f"✔ {ip} respondeu - Hostname: {host}")
+                if filtro == "" or filtro in host.lower():
+                    encontrados.append((ip, host))
+                    tree.insert("", "end", values=(ip, host))
+            else:
+                log(f"✖ {ip} não respondeu")
+            progress_var.set((i - ini + 1) / total * 100)
+
+        def escanear():
+            btn_iniciar.config(state="disabled")
+            btn_exportar.config(state="disabled")
+            with ThreadPoolExecutor(max_workers=50) as executor:
+                futures = [executor.submit(escanear_ip, i) for i in range(ini, fim + 1)]
+                for f in futures:
+                    f.result()
+            resultado.extend(encontrados)
+            log("✅ Varredura finalizada!")
+            progress_var.set(100)
+            btn_iniciar.config(state="normal")
+            btn_exportar.config(state="normal")
+
+        threading.Thread(target=escanear).start()
+
+    def exportar_csv():
+        if not resultado:
+            messagebox.showinfo("Informação", "Nenhum dado para exportar.")
+            return
+        nome_arquivo = f"varredura_{time.strftime('%Y%m%d_%H%M%S')}.csv"
+        with open(nome_arquivo, "w", newline="", encoding="utf-8") as f:
+            writer = csv.writer(f)
+            writer.writerow(["Endereço IP", "Hostname"])
+            writer.writerows(resultado)
+        messagebox.showinfo("Exportado", f"Arquivo salvo: {nome_arquivo}")
+
+    btn_iniciar = tk.Button(btn_frame, text="Iniciar Varredura", font=("Arial", 12, "bold"), bg="#00B386", fg="white", command=iniciar_varredura)
+    btn_iniciar.pack(side="left", padx=5)
+
+    btn_exportar = tk.Button(btn_frame, text="Exportar CSV", font=("Arial", 12, "bold"), bg="#00997B", fg="white", command=exportar_csv, state="disabled")
+    btn_exportar.pack(side="left", padx=5)
+
+    btn_voltar = tk.Button(btn_frame, text="Voltar", font=("Arial", 12, "bold"), bg="#008F68", fg="white", command=tela_inicial)
+    btn_voltar.pack(side="left", padx=5)
 
 def relatorio_geral():
     limpar_tela()
@@ -762,7 +943,7 @@ def relatorio_geral():
 
     tree.pack(expand=True, fill="both")
    
-    arquivo = "funcionarios.xlsx"
+    arquivo = os.path.join("Y:\\Tecnologia", "Programa gestão tecnologia", "funcionarios.xlsx")
     global df
     if os.path.exists(arquivo):
         df = pd.read_excel(arquivo, dtype=str).fillna("")
@@ -827,7 +1008,7 @@ def relatorio_admissao():
 
     tree.pack(expand=True, fill="both")
    
-    arquivo = "funcionarios.xlsx"
+    arquivo = os.path.join("Y:\\Tecnologia", "Programa gestão tecnologia", "funcionarios.xlsx")
     global df
     if os.path.exists(arquivo):
         df = pd.read_excel(arquivo, sheet_name="Admissao", dtype=str).fillna("")
@@ -878,7 +1059,7 @@ def relatorio_desligamento():
     tree_scroll_x = tk.Scrollbar(tree_frame, orient="horizontal")
     tree_scroll_x.pack(side="bottom", fill="x")
 
-    colunas = ["Funcionário","Inativar SISBR", "Bloquear Sipag","Excluir Consórcio","Bloquear Prognum","Redirecionar e-mail","Backup e-mail", "Remover lista distribuição", "Remover grupos e-mail", "Remover sharepoint", "Bloquear e-mail",
+    colunas = ["Funcionário","Inativar SISBR", "Bloquear Sipag","Excluir Consórcio","Bloquear Prognum","Redirecionar e-mail","Backup e-mail", "Remover grupos e-mail", "Remover sharepoint", "Bloquear e-mail",
                "Excluir operador topdesk", "Inativar e mover AD","Inativar biometria","Desativar VPN","Comunicar CCS","Observações","Responsável"]
     
     tree = ttk.Treeview(tree_frame, columns=colunas, show="headings", height=15, 
@@ -893,7 +1074,7 @@ def relatorio_desligamento():
 
     tree.pack(expand=True, fill="both")
    
-    arquivo = "funcionarios.xlsx"
+    arquivo = os.path.join("Y:\\Tecnologia", "Programa gestão tecnologia", "funcionarios.xlsx")
     global df
     if os.path.exists(arquivo):
         df = pd.read_excel(arquivo, sheet_name="Desligados", dtype=str).fillna("")
@@ -910,7 +1091,7 @@ def relatorio_desligamento():
     tk.Button(frame, text="Resolver Pendência", font=("Arial", 12, "bold"), width=20, height=2, bg="#00997B", fg="white", relief="ridge", bd=3, command=consultar_usuario_desligado).pack(side="right", padx=10, pady=10)
 
 # Caminho do arquivo Excel
-CAMINHO_ARQUIVO = "funcionarios.xlsx"
+CAMINHO_ARQUIVO = os.path.join("Y:\\Tecnologia", "Programa gestão tecnologia", "funcionarios.xlsx")
 ABA_ORIGEM = "Ativos"
 ABA_DESTINO = "Inativos"
 ABA_CHECKLIST_ADM = "Admissao"
@@ -1102,7 +1283,7 @@ def checklist_desligamento():
     global responsavel_var
     tk.Label(info_frame, text="Responsável:", font=("Arial", 14), bg="#003D1F", fg="white").grid(row=0, column=0, sticky="e", padx=(0,10))
     responsavel_var = tk.StringVar()
-    combo_responsavel = ttk.Combobox(info_frame, textvariable=responsavel_var, values=["Denilson Oliveira", "Paulo Roberto", "Reinaldo Camilo"], font=("Arial", 12), state="readonly", width=30)
+    combo_responsavel = ttk.Combobox(info_frame, textvariable=responsavel_var, values=["Denilson Oliveira", "Paulo Roberto", " Samuel Molina", "Reinaldo Camilo"], font=("Arial", 12), state="readonly", width=30)
     combo_responsavel.grid(row=0, column=1, sticky="w")
     combo_responsavel.set("Selecione...")
 
@@ -1141,7 +1322,7 @@ def salvar_dados(entries):
         messagebox.showerror("Erro", "Todos os campos devem ser preenchidos!")
         return
     
-    arquivo = "funcionarios.xlsx"
+    arquivo = os.path.join("Y:\\Tecnologia", "Programa gestão tecnologia", "funcionarios.xlsx")
     salvar_em_excel(dados, arquivo)
     messagebox.showinfo("Sucesso", "Funcionário cadastrado com sucesso!")
     tela_inicial()
@@ -1177,7 +1358,7 @@ def buscar_funcionario_checklist():
         messagebox.showwarning("Aviso", "Digite um nome, CPF, e-mail ou login para buscar.")
         return
 
-    CAMINHO_ARQUIVO = "funcionarios.xlsx"
+    CAMINHO_ARQUIVO = os.path.join("Y:\\Tecnologia", "Programa gestão tecnologia", "funcionarios.xlsx")
 
     try:
         df_funcionarios = pd.read_excel(CAMINHO_ARQUIVO, sheet_name="Ativos")
@@ -1303,7 +1484,7 @@ def buscar_usuario_inativo():
         messagebox.showwarning("Aviso", "Digite o nome.")
         return
 
-    CAMINHO_ARQUIVO = "funcionarios.xlsx"
+    CAMINHO_ARQUIVO = os.path.join("Y:\\Tecnologia", "Programa gestão tecnologia", "funcionarios.xlsx")
 
     try:
         df_inativos = pd.read_excel(CAMINHO_ARQUIVO, sheet_name="Desligados")
@@ -1350,7 +1531,7 @@ def buscar_usuario_inativo():
 
 def salvar_checklist_inativo():
     try:
-        CAMINHO_ARQUIVO = "funcionarios.xlsx"
+        CAMINHO_ARQUIVO = os.path.join("Y:\\Tecnologia", "Programa gestão tecnologia", "funcionarios.xlsx")
 
         if df_inativos_global is None or usuario_index_inativo is None:
             messagebox.showerror("Erro", "Nenhum usuário inativo selecionado para salvar.")
@@ -1367,6 +1548,7 @@ def salvar_checklist_inativo():
             df_inativos_global.to_excel(writer, sheet_name="Desligados", index=False)
 
         messagebox.showinfo("Sucesso", "Checklist salvo com sucesso!")
+        tela_inicial()
 
     except Exception as e:
         messagebox.showerror("Erro", f"Falha ao salvar o checklist:\n{e}")
@@ -1458,7 +1640,7 @@ def salvar_dados(entries):
         messagebox.showerror("Erro", "Todos os campos devem ser preenchidos!")
         return
     
-    arquivo = "funcionarios.xlsx"
+    arquivo = os.path.join("Y:\\Tecnologia", "Programa gestão tecnologia", "funcionarios.xlsx")
     salvar_em_excel(dados, arquivo)
     messagebox.showinfo("Sucesso", "Funcionário cadastrado com sucesso!")
     tela_inicial()
@@ -1582,7 +1764,7 @@ def buscar_usuario_admissao():
         messagebox.showwarning("Aviso", "Digite o nome.")
         return
 
-    CAMINHO_ARQUIVO = "funcionarios.xlsx"
+    CAMINHO_ARQUIVO = os.path.join("Y:\\Tecnologia", "Programa gestão tecnologia", "funcionarios.xlsx")
 
     try:
         df_admissaos = pd.read_excel(CAMINHO_ARQUIVO, sheet_name="Admissao")
@@ -1595,7 +1777,7 @@ def buscar_usuario_admissao():
         ]
 
         if len(encontrados) == 0:
-            messagebox.showerror("Não encontrado", f"Nenhum usuário inativo encontrado com o termo '{termo_busca}'.")
+            messagebox.showerror("Não encontrado", f"Nenhum usuário admitido  encontrado com o termo '{termo_busca}'.")
             return
         elif len(encontrados) > 1:
             nomes = "\n- " + "\n- ".join(encontrados["Nome"].tolist())
@@ -1629,7 +1811,7 @@ def buscar_usuario_admissao():
     
 def salvar_checklist_a_admissao():
     try:
-        CAMINHO_ARQUIVO = "funcionarios.xlsx"
+        CAMINHO_ARQUIVO = os.path.join("Y:\\Tecnologia", "Programa gestão tecnologia", "funcionarios.xlsx")
 
         if df_admissaos_global is None or usuario_index_admissao is None:
             messagebox.showerror("Erro", "Nenhum usuário admitido selecionado para salvar.")
@@ -1646,10 +1828,11 @@ def salvar_checklist_a_admissao():
             df_admissaos_global.to_excel(writer, sheet_name="Admissao", index=False)
 
         messagebox.showinfo("Sucesso", "Checklist salvo com sucesso!")
+        tela_inicial()
 
     except Exception as e:
         messagebox.showerror("Erro", f"Falha ao salvar o checklist:\n{e}")
-    tela_inicial()
+    
 def buscar_funcionario_grupo():
     termo_busca = entry_pesquisa.get().strip()
 
@@ -1657,7 +1840,7 @@ def buscar_funcionario_grupo():
         messagebox.showwarning("Aviso", "Digite um nome, CPF, e-mail ou login para buscar.")
         return
 
-    CAMINHO_ARQUIVO = "funcionarios.xlsx"
+    CAMINHO_ARQUIVO = os.path.join("Y:\\Tecnologia", "Programa gestão tecnologia", "funcionarios.xlsx")
 
     try:
         df_funcionarios = pd.read_excel(CAMINHO_ARQUIVO, sheet_name="Ativos")
