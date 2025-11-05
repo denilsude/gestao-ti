@@ -1,5 +1,64 @@
-.qodo
-node_modules/
-.env
+# ===============================
+# Python / Flask project ignores
+# ===============================
+
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+.env/
+env/
+.venv/
+
+# VS Code
+.vscode/
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Logs
 *.log
+logs/
+*.tmp
+
+# OS-generated files
 .DS_Store
+Thumbs.db
+desktop.ini
+
+# Jupyter / notebooks (caso use)
+.ipynb_checkpoints/
+
+# Data files (planilhas locais)
+*.xlsx
+*.csv
+data/
+backup/
+
+# Flask instance folder
+instance/
+*.db
+*.sqlite3
+
+# Environment variables
+.env
+.env.*
+.env.bak
+
+# Cache
+*.bak
+*.swp
+*.swo
+
+# PyInstaller executables
+*.spec
+*.exe
+*.dll
+
+# Pyt
