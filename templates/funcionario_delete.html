@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2>Excluir Funcionário</h2>
+  <p>Tem certeza que deseja excluir <strong>{{ funcionario.nome }}</strong>?</p>
+
+  <form method="POST">
+    <button type="submit">Sim, excluir</button>
+    <a href="{{ url_for('dashboard.dashboard') }}">Cancelar</a>
+  </form>
+{% endblock %}

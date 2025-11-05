@@ -3,6 +3,7 @@ from flask_login import LoginManager, current_user, logout_user, login_required
 from database import init_app
 from routes.auth import auth_bp, user_loader
 from routes.dashboard import dashboard_bp
+from routes.funcionarios import funcionarios_bp
 
 app = Flask(__name__)
 app.config.from_object('config.Config')
@@ -15,6 +16,7 @@ login_manager.user_loader(user_loader)  # registra o carregador vindo do routes.
 # Blueprints
 app.register_blueprint(auth_bp)
 app.register_blueprint(dashboard_bp)
+app.register_blueprint(funcionarios_bp)
 
 # Inicializa DB e cria tabelas
 init_app(app)

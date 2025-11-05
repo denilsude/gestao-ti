@@ -3,27 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <title>Dashboard - Funcionários</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+        }
+        h2 {
+            color: #333;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 15px;
+        }
+        th, td {
+            border: 1px solid #aaa;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #eee;
+        }
+        a {
+            text-decoration: none;
+            color: #0066cc;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .actions a {
+            margin-right: 8px;
+        }
+        .header-links {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
 </head>
 <body>
-    <h2>Lista de Funcionários</h2>
-    <p><a href="{{ url_for('logout') }}">Sair</a></p>
-    <table border="1" cellpadding="6">
-        <tr>
-            <th>Nome</th>
-            <th>Setor</th>
-            <th>Cargo</th>
-            <th>Email</th>
-            <th>Telefone</th>
-        </tr>
-        {% for f in funcionarios %}
-        <tr>
-            <td>{{ f.nome }}</td>
-            <td>{{ f.setor }}</td>
-            <td>{{ f.cargo }}</td>
-            <td>{{ f.email }}</td>
-            <td>{{ f.telefone }}</td>
-        </tr>
-        {% endfor %}
+    <div class="header-links">
+        <h2>Lista de Funcionários</h2>
+        <div>
+            <a href="{{ url_for('logout') }}">🚪 Sair</a>
+        </div>
+    </div>
+
+    <p><a href="{{ url_for('funcionarios.novo_funcionario') }}">➕ Novo Funcionário</a></p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Cargo</th>
+                <th>Setor</th>
+                <th>Telefone</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for f in funcionarios %}
+            <tr>
+                <td>{{ f.nome }}</td>
+                <td>{{ f.email }}</td>
+                <td>{{ f.cargo }}</td>
+                <td>{{ f.setor }}</td>
+                <td>{{ f.telefone }}</td>
+                <td class="actions">
+                    <a href="{{ url_for('funcionarios.editar_funcionario', id=f.id) }}">✏️ Editar</a>
+                    <a href="{{ url_for('funcionarios.excluir_funcionario', id=f.id) }}">🗑️ Excluir</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
     </table>
 </body>
 </html>

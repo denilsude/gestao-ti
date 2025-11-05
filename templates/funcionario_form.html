@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2>{{ titulo }}</h2>
+  <form method="POST">
+    <label>Nome:</label><br>
+    <input type="text" name="nome" value="{{ funcionario.nome if funcionario else '' }}"><br>
+
+    <label>Email:</label><br>
+    <input type="email" name="email" value="{{ funcionario.email if funcionario else '' }}"><br>
+
+    <label>Cargo:</label><br>
+    <input type="text" name="cargo" value="{{ funcionario.cargo if funcionario else '' }}"><br>
+
+    <label>Setor:</label><br>
+    <input type="text" name="setor" value="{{ funcionario.setor if funcionario else '' }}"><br><br>
+
+    <button type="submit">Salvar</button>
+    <a href="{{ url_for('dashboard.dashboard') }}">Cancelar</a>
+  </form>
+{% endblock %}
