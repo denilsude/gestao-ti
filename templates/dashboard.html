@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - Funcionários</title>
+</head>
+<body>
+    <h2>Lista de Funcionários</h2>
+    <p><a href="{{ url_for('logout') }}">Sair</a></p>
+    <table border="1" cellpadding="6">
+        <tr>
+            <th>Nome</th>
+            <th>Setor</th>
+            <th>Cargo</th>
+            <th>Email</th>
+            <th>Telefone</th>
+        </tr>
+        {% for f in funcionarios %}
+        <tr>
+            <td>{{ f.nome }}</td>
+            <td>{{ f.setor }}</td>
+            <td>{{ f.cargo }}</td>
+            <td>{{ f.email }}</td>
+            <td>{{ f.telefone }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
