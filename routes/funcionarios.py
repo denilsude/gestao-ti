@@ -1,12 +1,12 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from flask_login import login_required, current_user
+#from flask_login import login_required, current_user
 from database import db
 from models.funcionario import Funcionario
 
 funcionarios_bp = Blueprint("funcionarios", __name__)
 
 @funcionarios_bp.route("/funcionarios/novo", methods=["GET", "POST"])
-@login_required
+#@login_required
 def novo_funcionario():
     if request.method == "POST":
         nome = request.form.get("nome")
@@ -23,7 +23,7 @@ def novo_funcionario():
     return render_template("funcionario_form.html", titulo="Novo Funcionário")
 
 @funcionarios_bp.route("/funcionarios/<int:id>/editar", methods=["GET", "POST"])
-@login_required
+#@login_required
 def editar_funcionario(id):
     funcionario = Funcionario.query.get_or_404(id)
 
@@ -39,7 +39,7 @@ def editar_funcionario(id):
     return render_template("funcionario_form.html", funcionario=funcionario, titulo="Editar Funcionário")
 
 @funcionarios_bp.route("/funcionarios/<int:id>/excluir", methods=["GET", "POST"])
-@login_required
+#@login_required
 def excluir_funcionario(id):
     funcionario = Funcionario.query.get_or_404(id)
 
