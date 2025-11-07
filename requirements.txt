@@ -1,7 +1,6 @@
 flask
 flask-sqlalchemy
 flask-login
-ldap3
 python-dotenv
 pandas
 openpyxl

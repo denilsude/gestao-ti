@@ -1,5 +1,73 @@
-/* style.css - pequenas customizações visuais */
-body { font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
-.card { border-radius: 0.6rem; }
-.table td, .table th { vertical-align: middle; }
-.navbar-brand svg { filter: drop-shadow(0 1px 0 rgba(0,0,0,0.05)); }
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background-color: #f4f7fc;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #004080;
+    color: white;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 22px;
+    letter-spacing: 0.5px;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin-left: 15px;
+    font-weight: 500;
+}
+
+main {
+    padding: 40px;
+}
+
+h2 {
+    color: #003366;
+}
+
+.botoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.btn {
+    background-color: #007bff;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
+ul {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    list-style: none;
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
+ul li {
+    padding: 8px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+ul li:last-child {
+    border-bottom: none;
+}

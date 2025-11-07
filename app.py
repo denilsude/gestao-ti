@@ -1,37 +1,34 @@
-from flask import Flask, render_template, redirect, url_for
-from flask_login import LoginManager, current_user, logout_user, login_required
-from database import init_app
-from routes.auth import auth_bp, user_loader
-from routes.dashboard import dashboard_bp
-from routes.funcionarios import funcionarios_bp
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager
+from config import Config
 
-app = Flask(__name__)
-app.config.from_object('config.Config')
 
-# Login Manager
-login_manager = LoginManager(app)
-login_manager.login_view = 'auth.login'
-login_manager.user_loader(user_loader)  # registra o carregador vindo do routes.auth
 
-# Blueprints
-app.register_blueprint(auth_bp)
-app.register_blueprint(dashboard_bp)
-app.register_blueprint(funcionarios_bp)
 
-# Inicializa DB e cria tabelas
-init_app(app)
+db = SQLAlchemy()
+login_manager = LoginManager()
 
-@app.route('/')
-def index():
-    if current_user.is_authenticated:
-        return redirect(url_for('dashboard.dashboard'))
-    return render_template('base.html')
+def create_app():
+    app = Flask(__name__)
+    app.config.from_object(Config)
 
-@app.route('/logout')
-@login_required
-def logout():
-    logout_user()
-    return redirect(url_for('auth.login'))
+    db.init_app(app)
+    login_manager.init_app(app)
+    login_manager.login_view = 'auth.login'
 
-if __name__ == '__main__':
-    app.run(debug=False)
+    from routes.auth import auth_bp
+    from routes.dashboard import dashboard_bp
+    from routes.funcionarios import funcionarios_bp
+    from routes.checklists import checklists_bp
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(dashboard_bp)
+    app.register_blueprint(funcionarios_bp)
+    app.register_blueprint(checklists_bp)
+    return app
+
+app = create_app()
+
+from models import user, funcionarios
+with app.app_context():
+    db.create_all()
