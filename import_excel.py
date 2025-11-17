@@ -1,7 +1,7 @@
 import pandas as pd
 from app import app
 from database import db
-from models.funcionario import Funcionario
+from models.funcionarios import Funcionario
 
 ARQUIVO = "data/funcionarios.xlsx"
 
