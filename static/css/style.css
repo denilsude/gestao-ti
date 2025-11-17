@@ -1,5 +1,36 @@
-body { font-family: "Segoe UI", Roboto, Arial, sans-serif; }
-.table td, .table th { vertical-align: middle; }
-.navbar-brand { font-weight: 600; }
-.pagination .page-link { color: #0d6efd; }
-.pagination .page-item.active .page-link { background-color: #0d6efd; border-color: #0d6efd; }
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f7fc;
+    margin: 0;
+}
+
+.navbar {
+    background-color: #0056b3 !important;
+}
+
+.navbar .nav-link, .navbar-brand {
+    color: white !important;
+}
+
+.container {
+    margin-top: 30px;
+}
+
+.btn-primary {
+    background-color: #006ce0;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #004c9c;
+}
+
+.card {
+    border-radius: 8px;
+    border: 1px solid #d1d1d1;
+}
+
+.table thead {
+    background-color: #0056b3;
+    color: white;
+}
