@@ -1,12 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-3">
-  <h4>Funcionários</h4>
-  
-  <form method="GET" action="{{ url_for('funcionarios.listar') }}" class="d-flex">
-    <input type="text" class="form-control me-2" name="busca" placeholder="Buscar por nome, setor ou email" value="{{ busca or '' }}">
-    <button class="btn btn-outline-primary" type="submit">Buscar</button>
-  </form>
+    <h4>Funcionários</h4>
+    <a href="{{ url_for('checklists.listar_ativos') }}" class="btn btn-success">
+        <i class="bi bi-person-plus"></i> Iniciar Admissão (Novo)
+    </a>
 </div>
 
 <a href="{{ url_for('funcionarios.novo') }}" class="btn btn-success mb-3">+ Novo Funcionário</a>
@@ -17,20 +15,33 @@
       <tr>
         <th>Nome</th>
         <th>Email</th>
-        <th>Cargo</th>
         <th>Setor</th>
-        <th>Ações</th>
+        <th>Status</th> <th>Ações</th>
       </tr>
     </thead>
     <tbody>
       {% for f in funcionarios.items %}
       <tr>
-        <td>{{ f.nome }}</td>
+        <td>
+            <strong>{{ f.nome }}</strong><br>
+            <small class="text-muted">{{ f.cargo }}</small>
+        </td>
         <td>{{ f.email }}</td>
-        <td>{{ f.cargo }}</td>
         <td>{{ f.setor }}</td>
         <td>
-          <a href="{{ url_for('funcionarios.editar_funcionario', id=f.id) }}" class="btn btn-sm btn-outline-secondary">Editar</a>
+            {% if f.status == 'Ativo' %}
+                <span class="badge bg-success">Ativo</span>
+            {% elif f.status == 'Inativo' %}
+                <span class="badge bg-warning text-dark">Inativo (Desligamento)</span>
+            {% elif f.status == 'Desligado' %}
+                <span class="badge bg-dark">Desligado</span>
+            {% else %}
+                <span class="badge bg-secondary">{{ f.status }}</span>
+            {% endif %}
+        </td>
+        <td>
+          <a href="{{ url_for('funcionarios.editar_funcionario', id=f.id) }}" class="btn btn-sm btn-outline-secondary">Editar/Ver</a>
+          
           <a href="{{ url_for('funcionarios.excluir_funcionario', id=f.id) }}" class="btn btn-sm btn-outline-danger ms-2">Excluir</a>
         </td>
       </tr>

@@ -1,25 +1,94 @@
 {% extends "base.html" %}
 {% block content %}
-  <h4>Dashboard</h4>
-  <p>Bem-vindo ao seu portal de Gestão de TI!</p>
   
-  <div class="mt-4" style="max-width: 600px;">
-    
-    <div class="card text-center mb-3">
-      <div class="card-body">
-        <h5 class="card-title">Funcionários Cadastrados</h5>
-        <p class="card-text fs-2 fw-bold">{{ total_funcionarios }}</p> 
-        <a href="{{ url_for('funcionarios.listar') }}" class="btn btn-outline-primary">Ver Todos</a>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4>Visão Geral</h4>
+    <span class="text-muted">Gestão de Ativos e Pessoas</span>
+</div>
+  
+  <div class="row g-3 mb-4">
+    <div class="col-md-6">
+      <div class="card p-3 d-flex flex-row align-items-center justify-content-between h-100">
+        <div>
+            <div class="widget-label">Colaboradores Ativos</div>
+            <div class="widget-number">{{ total_funcionarios }}</div>
+        </div>
+        <div class="text-end">
+            <a href="{{ url_for('funcionarios.listar') }}" class="btn btn-sm btn-outline-primary">Ver Lista</a>
+        </div>
       </div>
     </div>
 
-    <div class="card text-center mb-3">
-      <div class="card-body">
-        <h5 class="card-title">Equipamentos no Inventário</h5>
-        <p class="card-text fs-2 fw-bold">{{ total_equipamentos }}</p>
-        <a href="{{ url_for('equipamentos.listar') }}" class="btn btn-outline-primary">Ver Inventário</a>
+    <div class="col-md-6">
+      <div class="card p-3 d-flex flex-row align-items-center justify-content-between h-100">
+        <div>
+            <div class="widget-label">Total de Ativos (TI)</div>
+            <div class="widget-number">{{ total_equipamentos }}</div>
+        </div>
+        <div class="text-end">
+            <a href="{{ url_for('equipamentos.listar') }}" class="btn btn-sm btn-outline-primary">Inventário</a>
+        </div>
       </div>
     </div>
-
   </div>
+
+  <h5 class="mb-3">📦 Monitor de Estoque (Disponibilidade)</h5>
+  <div class="row g-3 mb-4">
+      {% for tipo, dados in estoque.items() %}
+      <div class="col-md-3">
+          <div class="card h-100">
+              <div class="card-header py-2 text-center fw-bold" style="background-color: #e9ecef;">
+                  {{ tipo }}
+              </div>
+              <div class="card-body text-center">
+                  <h3 class="mb-0">{{ dados.disponivel }}</h3>
+                  <small class="text-success fw-bold">Disponíveis</small>
+                  <hr class="my-2">
+                  <div class="d-flex justify-content-between small text-muted">
+                      <span>Em uso: <strong>{{ dados.em_uso }}</strong></span>
+                      <span>Total: <strong>{{ dados.total }}</strong></span>
+                  </div>
+              </div>
+              {% if dados.disponivel < 3 %}
+                <div class="card-footer bg-danger text-white text-center py-1 small">
+                    ⚠️ Estoque Baixo
+                </div>
+              {% endif %}
+          </div>
+      </div>
+      {% else %}
+      <div class="col-12"><p class="text-muted">Nenhum equipamento cadastrado com tipo definido.</p></div>
+      {% endfor %}
+  </div>
+
+  <div class="row">
+      <div class="col-md-6">
+          <div class="card h-100">
+              <div class="card-header bg-white fw-bold">
+                  🏢 Top 5 Setores com Mais Equipamentos
+              </div>
+              <ul class="list-group list-group-flush">
+                  {% for setor, qtd in top_setores %}
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                      {{ setor }}
+                      <span class="badge bg-primary rounded-pill">{{ qtd }}</span>
+                  </li>
+                  {% endfor %}
+              </ul>
+          </div>
+      </div>
+      
+      <div class="col-md-6">
+          <div class="card h-100 bg-light border-0 d-flex align-items-center justify-content-center p-4">
+              <div class="text-center">
+                  <h5 class="text-muted">Precisa iniciar um processo?</h5>
+                  <p>Admissão, Demissão ou Troca de Equipamento.</p>
+                  <a href="{{ url_for('checklists.listar_ativos') }}" class="btn btn-success btn-lg shadow">
+                      🚀 Ir para Processos
+                  </a>
+              </div>
+          </div>
+      </div>
+  </div>
+
 {% endblock %}

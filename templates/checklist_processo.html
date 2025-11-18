@@ -1,57 +1,80 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h2>Checklist: {{ processo.tipo.capitalize() }}</h2>
-<h4>Funcionário: {{ processo.funcionario.nome }}</h4>
-<p>
-  Iniciado por: <strong>{{ processo.ti_user.username }}</strong> em {{ processo.created_at.strftime('%d/%m/%Y') }}
-</p>
-
-<form method="POST" action="{{ url_for('checklists.ver_processo', processo_id=processo.id) }}">
-
-  <div class="list-group">
-    {% for item in processo.items %}
-    <div class="list-group-item">
-      <div class="row align-items-center">
-        
-        <div class="col-auto">
-          <div class="form-check form-switch fs-4">
-            <input class="form-check-input" type="checkbox" role="switch" 
-                   id="check_{{ item.id }}" 
-                   name="check_{{ item.id }}"
-                   {% if item.status == 'Concluído' %}checked{% endif %}>
-          </div>
-        </div>
-        
-        <div class="col">
-          <label class="form-check-label fs-5" for="check_{{ item.id }}">
-            {{ item.descricao }}
-          </label>
-          
-          {% if item.status == 'Concluído' %}
-            <small class="text-muted d-block mt-1">
-              Concluído por: {{ item.ti_concluiu_user.username or 'N/A' }} 
-              em {{ item.updated_at.strftime('%d/%m/%Y %H:%M') }}
-            </small>
-          {% endif %}
-        </div>
-        
-      </div>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="mb-0">Checklist: {{ processo.tipo.title() }}</h2>
+        <p class="text-muted mb-0">Colaborador: <strong>{{ processo.funcionario.nome }}</strong></p>
     </div>
-    {% endfor %}
-  </div>
+    <div class="text-end">
+        <span class="badge bg-light text-dark border">Iniciado por: {{ processo.ti_user.username }}</span>
+    </div>
+</div>
 
-  <hr>
+<form method="POST">
+
+  {% if processo.tipo == 'admissao' %}
+  <div class="card mb-4 border-primary">
+      <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">🔐 Credenciais Geradas</h5>
+      </div>
+      <div class="card-body bg-light">
+          <div class="row g-3">
+              <div class="col-md-4">
+                  <label class="fw-bold">Usuário AD</label>
+                  <input type="text" class="form-control" name="login_ad" value="{{ processo.funcionario.login_ad }}">
+                  <small class="text-muted">Senha Padrão: <strong>Sicoob@123</strong></small>
+              </div>
+              <div class="col-md-4">
+                  <label class="fw-bold">E-mail</label>
+                  <input type="email" class="form-control" name="email" value="{{ processo.funcionario.email }}">
+                  <small class="text-muted">Senha Padrão: <strong>Psw@1767</strong></small>
+              </div>
+              <div class="col-md-4">
+                  <label class="fw-bold">Usuário SISBR</label>
+                  <input type="text" class="form-control" name="login_sisbr" value="{{ processo.funcionario.login_sisbr }}">
+                  <small class="text-muted">PA: <strong>{{ processo.funcionario.num_pa }}</strong></small>
+              </div>
+          </div>
+      </div>
+  </div>
+  {% endif %}
+
+  <div class="card mb-4">
+      <ul class="list-group list-group-flush">
+        {% for item in processo.items %}
+        <li class="list-group-item d-flex align-items-center p-3">
+            <div class="me-3">
+                <input class="form-check-input fs-4" type="checkbox" name="check_{{ item.id }}" 
+                       id="t_{{ item.id }}" {% if item.status == 'Concluído' %}checked{% endif %}>
+            </div>
+            <div class="flex-grow-1">
+                <label class="form-check-label fs-6 fw-bold" for="t_{{ item.id }}" style="cursor: pointer;">
+                    {{ item.descricao }}
+                </label>
+                {% if 'TERMO' in item.descricao %}
+                    <span class="badge bg-warning text-dark ms-2">Imprimir Termo</span>
+                {% endif %}
+            </div>
+        </li>
+        {% endfor %}
+      </ul>
+  </div>
 
   <div class="mb-3">
-    <label for="comentario_geral" class="form-label fs-5">Comentário Geral</label>
-    <textarea class="form-control" id="comentario_geral" name="comentario_geral" rows="4"
-              placeholder="Se houver itens pendentes, você deve deixar um comentário aqui explicando o motivo...">{{ comentario_geral }}</textarea>
+    <label class="form-label">Observações (Se houver pendências)</label>
+    <textarea class="form-control" name="comentario_geral" rows="3">{{ comentario_geral }}</textarea>
   </div>
   
-  <button type="submit" class="btn btn-primary btn-lg">Salvar Progresso</button>
-  <a href="{{ url_for('checklists.listar_ativos') }}" class="btn btn-outline-secondary btn-lg">Voltar aos Checklists</a>
+  <div class="d-flex justify-content-between">
+      <a href="{{ url_for('checklists.listar_ativos') }}" class="btn btn-secondary">Voltar</a>
+      <div>
+          {% if processo.tipo == 'admissao' %}
+             <a href="{{ url_for('checklists.gerar_termo', funcionario_id=processo.funcionario.id) }}" target="_blank" class="btn btn-dark me-2">🖨️ Imprimir Termo</a>
+          {% endif %}
+          <button type="submit" class="btn btn-primary px-4">Salvar e Concluir</button>
+      </div>
+  </div>
   
 </form>
-
 {% endblock %}

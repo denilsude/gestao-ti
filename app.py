@@ -1,16 +1,16 @@
-from flask import Flask
+from flask import Flask, redirect, url_for
 from flask_login import LoginManager
 from database import db
 from models.user import User
 from models.equipamentos import Equipamento
-from routes.equipamentos import equipamentos_bp
+from models.checklists import ChecklistProcesso, ChecklistItem
 
 # Blueprints
 from routes.auth import auth_bp
 from routes.dashboard import dashboard_bp
 from routes.funcionarios import funcionarios_bp
 from routes.checklists import checklists_bp
-from models.checklists import ChecklistProcesso, ChecklistItem
+from routes.equipamentos import equipamentos_bp
 
 
 def create_app():
@@ -36,6 +36,12 @@ def create_app():
     app.register_blueprint(checklists_bp)
     app.register_blueprint(equipamentos_bp)
 
+    # --- ROTA DA PÁGINA INICIAL (Redireciona para Login) ---
+    @app.route('/')
+    def index():
+        return redirect(url_for('auth.login'))
+    # -------------------------------------------------------
+
     return app
 
 
@@ -43,4 +49,5 @@ app = create_app()
 
 
 if __name__ == "__main__":
+    # AQUI ESTAVA O ERRO: Adicionei os 4 espaços abaixo
     app.run(debug=True)

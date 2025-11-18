@@ -9,7 +9,14 @@ class Funcionarios(db.Model):
     cargo = db.Column(db.String(120), nullable=False)
     email = db.Column(db.String(120), nullable=False)
     telefone = db.Column(db.String(20), nullable=True)
-    email = db.Column(db.String(120), nullable=False)
-    telefone = db.Column(db.String(20), nullable=True)
+    
+    # --- NOVOS CAMPOS (Para a TI) ---
+    num_pa = db.Column(db.String(10), nullable=True)      # Ex: 00, 01, 97
+    login_ad = db.Column(db.String(50), nullable=True)     # Ex: denilson.silva
+    login_sisbr = db.Column(db.String(50), nullable=True)  # Ex: DENILSONO3246_00
+    
+    # Status do funcionário
+    status = db.Column(db.String(20), nullable=False, default='Ativo')
+
     equipamentos = db.relationship('Equipamento', back_populates='funcionario')
     checklists = db.relationship('ChecklistProcesso', back_populates='funcionario', lazy='dynamic')

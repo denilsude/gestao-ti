@@ -1,53 +1,90 @@
+/* Fonte Moderna */
+@import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap');
+
+:root {
+    --sicoob-verde-escuro: #003641;
+    --sicoob-turquesa: #00AE9D;
+    --sicoob-verde-medio: #7D861C; /* Opcional para detalhes */
+    --cinza-fundo: #f0f2f5;
+    --branco: #ffffff;
+    --texto-escuro: #333333;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f7fc;
-    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--cinza-fundo);
+    color: var(--texto-escuro);
 }
 
+/* Navbar Profissional */
 .navbar {
-    background-color: #0056b3 !important;
+    background-color: var(--sicoob-verde-escuro) !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.navbar .nav-link, .navbar-brand {
-    color: white !important;
+.navbar-brand {
+    font-weight: 700;
+    letter-spacing: 0.5px;
 }
 
-.container {
-    margin-top: 30px;
-}
-
-.btn-primary {
-    background-color: #006ce0;
+/* Cartões e Containers */
+.card {
     border: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    transition: transform 0.2s;
+    background-color: var(--branco);
+}
+
+/* Botões Personalizados */
+.btn-primary {
+    background-color: var(--sicoob-verde-escuro);
+    border-color: var(--sicoob-verde-escuro);
 }
 
 .btn-primary:hover {
-    background-color: #004c9c;
+    background-color: #002a33;
+    border-color: #002a33;
 }
 
-.card {
-    border-radius: 8px;
-    border: 1px solid #d1d1d1;
-}
-
-.table thead {
-    background-color: #0056b3;
+.btn-success {
+    background-color: var(--sicoob-turquesa);
+    border-color: var(--sicoob-turquesa);
     color: white;
 }
-/* --- Estilos da Página de Login --- */
-.login-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 80vh; /* Ocupa a altura da tela */
+
+.btn-success:hover {
+    background-color: #009688;
+    border-color: #009688;
+    color: white;
 }
 
-.login-card {
-  width: 100%;
-  max-width: 400px; /* Define uma largura máxima */
-  padding: 2.5rem;
-  border-radius: 12px;
-  background-color: #ffffff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  border: 1px solid #e0e0e0;
+/* Tabelas mais bonitas */
+.table thead {
+    background-color: var(--sicoob-verde-escuro);
+    color: white;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 174, 157, 0.05); /* Leve toque de turquesa */
+}
+
+/* Dashboards Widgets */
+.widget-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--sicoob-verde-escuro);
+}
+
+.widget-label {
+    color: #666;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+/* Títulos */
+h2, h4, h5 {
+    color: var(--sicoob-verde-escuro);
+    font-weight: 600;
 }
