@@ -1,12 +1,89 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Novo Funcionário</h2>
+<h2>{% if funcionario %}Editar Funcionário{% else %}Novo Funcionário{% endif %}</h2>
+
 <form method="POST">
-    <input type="text" name="nome" placeholder="Nome" required>
-    <input type="text" name="setor" placeholder="Setor">
-    <input type="text" name="cargo" placeholder="Cargo">
-    <input type="email" name="email" placeholder="Email">
-    <input type="text" name="telefone" placeholder="Telefone">
+    <input type="text" name="nome" placeholder="Nome" required 
+           value="{{ funcionario.nome or '' }}">
+           
+    <input type="text" name="setor" placeholder="Setor" 
+           value="{{ funcionario.setor or '' }}">
+           
+    <input type="text" name="cargo" placeholder="Cargo" 
+           value="{{ funcionario.cargo or '' }}">
+           
+    <input type="email" name="email" placeholder="Email" 
+           value="{{ funcionario.email or '' }}">
+           
     <button type="submit">Salvar</button>
 </form>
+
+
+{% if funcionario and funcionario.id %}
+  <hr class="my-4">
+  <h4>Iniciar Novo Checklist</h4>
+  <p>Iniciar um novo processo para <strong>{{ funcionario.nome }}</strong>:</p>
+  
+  <div class="d-flex flex-wrap gap-2">
+      <form action="{{ url_for('checklists.iniciar_processo', tipo='troca_pa', funcionario_id=funcionario.id) }}" method="POST">
+        <button type="submit" class="btn btn-secondary">
+          Iniciar Checklist: Troca de PA
+        </button>
+      </form>
+      
+      <form action="{{ url_for('checklists.iniciar_processo', tipo='ferias', funcionario_id=funcionario.id) }}" method="POST">
+        <button type="submit" class="btn btn-secondary">
+          Iniciar Checklist: Férias
+        </button>
+      </form>
+
+      <form action="{{ url_for('checklists.iniciar_processo', tipo='demissao', funcionario_id=funcionario.id) }}" method="POST">
+        <button type="submit" class="btn btn-danger">
+          Iniciar Checklist: Demissão
+        </button>
+      </form>
+  </div>
+{% endif %}
+
+
+{% if funcionario and funcionario.id %}
+  <hr class="my-5">
+  
+  <div class="d-flex justify-content-between align-items.center mb-3">
+    <h4>Equipamentos Vinculados ({{ funcionario.equipamentos | length }})</h4>
+    <a href="{{ url_for('equipamentos.novo', vincular=funcionario.id) }}" 
+       class="btn btn-sm btn-outline-success">
+       + Vincular Novo Equipamento
+    </a>
+  </div>
+
+  {% if funcionario.equipamentos %}
+    <ul class="list-group">
+      {% for eq in funcionario.equipamentos %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <div>
+            <strong>{{ eq.patrimonio }}:</strong> {{ eq.tipo }} ({{ eq.nome_host }})
+          </div>
+          <a href="{{ url_for('equipamentos.editar_equipamento', id=eq.id) }}" 
+             class="btn btn-sm btn-outline-secondary">
+             Gerenciar Equipamento
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="text-muted">Nenhum equipamento vinculado a este funcionário.</p>
+  {% endif %}
+{% endif %}
+
+{% if funcionario and funcionario.id %}
+  <hr class="my-4">
+  <h4>Ações de Checklist</h4>
+  <p>Para iniciar um novo processo (Demissão, Férias, etc.) para <strong>{{ funcionario.nome }}</strong>, vá ao hub de checklists.</p>
+  
+  <a href="{{ url_for('checklists.listar_ativos') }}" class="btn btn-primary">
+    Ir para o Hub de Checklists
+  </a>
+{% endif %}
+
 {% endblock %}

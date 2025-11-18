@@ -34,3 +34,20 @@ body {
     background-color: #0056b3;
     color: white;
 }
+/* --- Estilos da Página de Login --- */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh; /* Ocupa a altura da tela */
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px; /* Define uma largura máxima */
+  padding: 2.5rem;
+  border-radius: 12px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e0e0e0;
+}

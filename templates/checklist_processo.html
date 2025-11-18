@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Checklist: {{ processo.tipo.capitalize() }}</h2>
+<h4>Funcionário: {{ processo.funcionario.nome }}</h4>
+<p>
+  Iniciado por: <strong>{{ processo.ti_user.username }}</strong> em {{ processo.created_at.strftime('%d/%m/%Y') }}
+</p>
+
+<form method="POST" action="{{ url_for('checklists.ver_processo', processo_id=processo.id) }}">
+
+  <div class="list-group">
+    {% for item in processo.items %}
+    <div class="list-group-item">
+      <div class="row align-items-center">
+        
+        <div class="col-auto">
+          <div class="form-check form-switch fs-4">
+            <input class="form-check-input" type="checkbox" role="switch" 
+                   id="check_{{ item.id }}" 
+                   name="check_{{ item.id }}"
+                   {% if item.status == 'Concluído' %}checked{% endif %}>
+          </div>
+        </div>
+        
+        <div class="col">
+          <label class="form-check-label fs-5" for="check_{{ item.id }}">
+            {{ item.descricao }}
+          </label>
+          
+          {% if item.status == 'Concluído' %}
+            <small class="text-muted d-block mt-1">
+              Concluído por: {{ item.ti_concluiu_user.username or 'N/A' }} 
+              em {{ item.updated_at.strftime('%d/%m/%Y %H:%M') }}
+            </small>
+          {% endif %}
+        </div>
+        
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <hr>
+
+  <div class="mb-3">
+    <label for="comentario_geral" class="form-label fs-5">Comentário Geral</label>
+    <textarea class="form-control" id="comentario_geral" name="comentario_geral" rows="4"
+              placeholder="Se houver itens pendentes, você deve deixar um comentário aqui explicando o motivo...">{{ comentario_geral }}</textarea>
+  </div>
+  
+  <button type="submit" class="btn btn-primary btn-lg">Salvar Progresso</button>
+  <a href="{{ url_for('checklists.listar_ativos') }}" class="btn btn-outline-secondary btn-lg">Voltar aos Checklists</a>
+  
+</form>
+
+{% endblock %}

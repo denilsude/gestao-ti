@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h4>Inventário de Equipamentos</h4>
+  
+  <form method="GET" action="{{ url_for('equipamentos.listar') }}" class="d-flex">
+    <input type="text" class="form-control me-2" name="busca" placeholder="Buscar por patrimônio, host..." value="{{ busca or '' }}">
+    <button class="btn btn-outline-primary" type="submit">Buscar</button>
+  </form>
+</div>
+
+<a href="{{ url_for('equipamentos.novo') }}" class="btn btn-success mb-3">+ Novo Equipamento</a>
+
+<div class="table-responsive">
+  <table class="table table-striped table-hover align-middle">
+    <thead class="table-light">
+      <tr>
+        <th>Patrimônio</th> <th>Host</th>
+        <th>Tipo</th>
+        <th>Usuário Associado</th>
+        <th>Status</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for eq in equipamentos.items %}
+      <tr>
+        <td>{{ eq.patrimonio }}</td> <td>{{ eq.nome_host }}</td>
+        <td>{{ eq.tipo }}</td>
+        <td>
+          {% if eq.funcionario %}
+            <a href="{{ url_for('funcionarios.editar_funcionario', id=eq.funcionario.id) }}">{{ eq.funcionario.nome }}</a>
+          {% else %}
+            --
+          {% endif %}
+        </td>
+        <td>
+          {% if eq.status == 'Disponível' %}
+            <span class="badge bg-success">{{ eq.status }}</span>
+          {% else %}
+            <span class="badge bg-warning text-dark">{{ eq.status }}</span>
+          {% endif %}
+        </td>
+        <td>
+          <a href="{{ url_for('equipamentos.editar_equipamento', id=eq.id) }}" class="btn btn-sm btn-outline-secondary">Editar</a>
+          <a href="{{ url_for('equipamentos.excluir_equipamento', id=eq.id) }}" class="btn btn-sm btn-outline-danger ms-2">Excluir</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<nav>
+  <ul class="pagination justify-content-center">
+    {% if equipamentos.has_prev %}
+      <li class="page-item">
+        <a class="page-link" href="{{ url_for('equipamentos.listar', page=equipamentos.prev_num, busca=busca) }}">Anterior</a>
+      </li>
+    {% else %}
+      <li class="page-item disabled"><span class="page-link">Anterior</span></li>
+    {% endif %}
+    <li class="page-item disabled"><span class="page-link">Página {{ equipamentos.page }} de {{ equipamentos.pages }}</span></li>
+    {% if equipamentos.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="{{ url_for('equipamentos.listar', page=equipamentos.next_num, busca=busca) }}">Próxima</a>
+      </li>
+    {% else %}
+      <li class="page-item disabled"><span class="page-link">Próxima</span></li>
+    {% endif %}
+  </ul>
+</nav>
+{% endblock %}

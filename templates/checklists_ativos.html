@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="row g-4 mb-5">
+  
+  <div class="col-md-6">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title">Checklist de Admissão</h5>
+        <p class="card-text">Para iniciar o processo de um novo funcionário que ainda não está no sistema.</p>
+        
+        <form action="{{ url_for('checklists.iniciar_processo_admissao') }}" method="POST">
+          <div class="mb-3">
+            <label for="nome_novo_funcionario" class="form-label">Nome do Novo Funcionário</label>
+            <input type="text" class="form-control" id="nome_novo_funcionario" name="nome_novo_funcionario" required>
+          </div>
+          <button type="submit" class="btn btn-success">Iniciar Admissão</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title">Checklist para Funcionário Existente</h5>
+        <p class="card-text">Para Demissão, Férias, Troca de PA, etc.</p>
+        
+        <form action="{{ url_for('checklists.iniciar_processo_existente') }}" method="POST">
+          <div class="mb-3">
+            <label for="tipo" class="form-label">Tipo de Checklist</label>
+            <select id="tipo" name="tipo" class="form-select" required>
+              <option value="" selected disabled>Selecione o processo...</option>
+              <option value="demissao">Demissão</option>
+              <option value="ferias">Férias</option>
+              <option value="troca_pa">Troca de PA</option>
+            </select>
+          </div>
+          
+          <div class="mb-3">
+            <label for="funcionario_id" class="form-label">Funcionário</label>
+            <select id="funcionario_id" name="funcionario_id" class="form-select" required>
+              <option value="" selected disabled>Selecione o funcionário...</option>
+              {% for f in funcionarios %}
+                <option value="{{ f.id }}">{{ f.nome }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary">Iniciar Processo</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div> <hr>
+<h4 class="mt-5">Checklists em Andamento</h4>
+<p>Todos os processos de TI que estão atualmente em aberto.</p>
+
+<div class="list-group">
+  {% for proc in processos %}
+    <a href="{{ url_for('checklists.ver_processo', processo_id=proc.id) }}" class="list-group-item list-group-item-action">
+      <div class="d-flex w-100 justify-content-between">
+        <h5 class="mb-1">{{ proc.tipo.capitalize() }}: {{ proc.funcionario.nome }}</h5>
+        <small class="text-muted">Iniciado em: {{ proc.created_at.strftime('%d/%m/%Y') }}</col>
+      </div>
+      <p class="mb-1">Iniciado por: {{ proc.ti_user.username }}</p>
+      
+      {% set total = proc.items|length %}
+      {% set concluidos = proc.items|selectattr('status', 'equalto', 'Concluído')|list|length %}
+      
+      {% if total > 0 %}
+        {% set progresso = (concluidos / total) * 100 %}
+        <small>{{ concluidos }} de {{ total }} tarefas concluídas.</small>
+        <div class="progress mt-2" style="height: 5px;">
+          <div class="progress-bar" role="progressbar" style="width: {{ progresso }}%;" aria-valuenow="{{ progresso }}"></div>
+        </div>
+      {% endif %}
+    </a>
+  {% else %}
+    <div class="alert alert-success">
+      Nenhum checklist em andamento. Tudo em ordem!
+    </div>
+  {% endfor %}
+</div>
+
+{% endblock %}

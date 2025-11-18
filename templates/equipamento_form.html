@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>{% if equipamento %}Editar Equipamento{% else %}Novo Equipamento{% endif %}</h2>
+
+<form method="POST" class="mt-3 row g-3">
+  
+  <div class="col-md-4">
+    <label for="patrimonio" class="form-label">Nº Patrimônio</label>
+    <input type="text" class="form-control" id="patrimonio" name="patrimonio" 
+           value="{{ equipamento.patrimonio or '' }}" required
+           pattern="[0-9]+" 
+           title="Apenas números são permitidos.">
+  </div>
+
+  <div class="col-md-4">
+    <label for="nome_host" class="form-label">Nome Host (Nome da Máquina)</label>
+    <input type="text" class="form-control" id="nome_host" name="nome_host" 
+           value="{{ equipamento.nome_host or '' }}" required
+           pattern="[a-zA-Z0-9]+" 
+           title="Apenas letras e números (sem espaços ou símbolos).">
+  </div>
+
+  <div class="col-md-4">
+    <label for="tipo" class="form-label">Tipo</label>
+    <select id="tipo" name="tipo" class="form-select" required>
+        <option value="" {% if not equipamento %}selected{% endif %} disabled>Selecione...</option>
+        <option value="Notebook" {% if equipamento and equipamento.tipo == 'Notebook' %}selected{% endif %}>Notebook</option>
+        <option value="Desktop" {% if equipamento and equipamento.tipo == 'Desktop' %}selected{% endif %}>Desktop</option>
+        <option value="Celular" {% if equipamento and equipamento.tipo == 'Celular' %}selected{% endif %}>Celular</option>
+        <option value="Monitor" {% if equipamento and equipamento.tipo == 'Monitor' %}selected{% endif %}>Monitor</option>
+        <option value="Outro" {% if equipamento and equipamento.tipo == 'Outro' %}selected{% endif %}>Outro</option>
+    </select>
+  </div>
+
+  <div class="col-md-6">
+    <label for="serial" class="form-label">Serial (S/N)</label>
+    <input type="text" class="form-control" id="serial" name="serial" 
+           value="{{ equipamento.serial or '' }}"
+           pattern="[a-zA-Z0-9]+" 
+           title="Apenas letras e números (sem espaços ou símbolos).">
+  </div>
+
+  <div class="col-md-6">
+    <label for="modelo" class="form-label">Modelo</label>
+    <input type="text" class="form-control" id="modelo" name="modelo" 
+           value="{{ equipamento.modelo or '' }}"
+           pattern="[a-zA-Z0-9 ]+" 
+           title="Apenas letras, números e espaços.">
+  </div>
+
+  <hr class="my-4">
+
+  <div class="col-12">
+    <label for="funcionario_id" class="form-label">Vincular ao Funcionário (Opcional)</label>
+    <select id="funcionario_id" name="funcionario_id" class="form-select">
+      
+      <option value="">-- Deixar Disponível --</option>
+      
+      {% for f in funcionarios %}
+        <option value="{{ f.id }}" 
+                {% if (equipamento and equipamento.funcionario_id == f.id) or (vincular_id and vincular_id == f.id) %}
+                  selected
+                {% endif %}>
+          {{ f.nome }} (Setor: {{ f.setor or 'N/D' }})
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="col-12">
+    <label for="comentarios" class="form-label">Comentários (Opcional)</label>
+    <textarea class="form-control" id="comentarios" name="comentarios" rows="3" 
+              placeholder="Ex: Em manutenção, Faltando software X, etc.">{{ equipamento.comentarios or '' }}</textarea>
+  </div>
+
+  <div class="col-12 mt-4">
+    <button type="submit" class="btn btn-primary">Salvar</button>
+    <a href="{{ url_for('equipamentos.listar') }}" class="btn btn-outline-secondary ms-2">Cancelar</a>
+  </div>
+</form>
+{% endblock %}
