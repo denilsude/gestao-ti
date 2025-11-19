@@ -32,32 +32,29 @@
     </div>
   </div>
 
-  <h5 class="mb-3">📦 Monitor de Estoque (Disponibilidade)</h5>
+  <h5 class="mb-3">📦 Monitor de Estoque</h5>
   <div class="row g-3 mb-4">
       {% for tipo, dados in estoque.items() %}
-      <div class="col-md-3">
+      <div class="col-md-2 col-6">
           <div class="card h-100">
               <div class="card-header py-2 text-center fw-bold" style="background-color: #e9ecef;">
                   {{ tipo }}
               </div>
-              <div class="card-body text-center">
-                  <h3 class="mb-0">{{ dados.disponivel }}</h3>
-                  <small class="text-success fw-bold">Disponíveis</small>
+              <div class="card-body text-center p-2">
+                  <h3 class="mb-0 {{ 'text-danger' if dados.disponivel < 2 else 'text-success' }}">{{ dados.disponivel }}</h3>
+                  <small class="fw-bold">Disponíveis</small>
                   <hr class="my-2">
                   <div class="d-flex justify-content-between small text-muted">
-                      <span>Em uso: <strong>{{ dados.em_uso }}</strong></span>
                       <span>Total: <strong>{{ dados.total }}</strong></span>
                   </div>
               </div>
-              {% if dados.disponivel < 3 %}
+              {% if dados.disponivel < 2 %}
                 <div class="card-footer bg-danger text-white text-center py-1 small">
-                    ⚠️ Estoque Baixo
+                    ⚠️ COMPRAR
                 </div>
               {% endif %}
           </div>
       </div>
-      {% else %}
-      <div class="col-12"><p class="text-muted">Nenhum equipamento cadastrado com tipo definido.</p></div>
       {% endfor %}
   </div>
 
@@ -65,7 +62,7 @@
       <div class="col-md-6">
           <div class="card h-100">
               <div class="card-header bg-white fw-bold">
-                  🏢 Top 5 Setores com Mais Equipamentos
+                  👥 Colaboradores Ativos por Departamento
               </div>
               <ul class="list-group list-group-flush">
                   {% for setor, qtd in top_setores %}
@@ -81,11 +78,9 @@
       <div class="col-md-6">
           <div class="card h-100 bg-light border-0 d-flex align-items-center justify-content-center p-4">
               <div class="text-center">
-                  <h5 class="text-muted">Precisa iniciar um processo?</h5>
-                  <p>Admissão, Demissão ou Troca de Equipamento.</p>
-                  <a href="{{ url_for('checklists.listar_ativos') }}" class="btn btn-success btn-lg shadow">
-                      🚀 Ir para Processos
-                  </a>
+                  <h5 class="text-muted">Status do Sistema:</h5>
+                  <p>Todos os dados estão sendo atualizados em tempo real.</p>
+                  <span class="badge bg-success py-2">SISTEMA OK</span>
               </div>
           </div>
       </div>

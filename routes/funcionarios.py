@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required
 from models.funcionarios import Funcionarios
 from database import db
-from sqlalchemy import desc # <-- IMPORTAÇÃO CRÍTICA (para ordenar)
+from sqlalchemy import desc
 
 funcionarios_bp = Blueprint("funcionarios", __name__)
 
@@ -22,6 +22,9 @@ def listar():
             (Funcionarios.setor.ilike(busca_like)) |
             (Funcionarios.email.ilike(busca_like))
         )
+    
+    # Filtra por padrão APENAS os ativos/inativos, exclui desligados do filtro principal
+    query = query.filter(Funcionarios.status != 'Desligado')
 
     funcionarios = query.order_by(Funcionarios.nome).paginate(page=page, per_page=15)
 
@@ -33,6 +36,7 @@ def listar():
 @funcionarios_bp.route("/funcionarios/novo", methods=["GET", "POST"])
 @login_required
 def novo():
+    # Rota 'novo' mantida para compatibilidade, mas o fluxo principal é via Admissão
     if request.method == "POST":
         novo = Funcionarios(
             nome=request.form.get("nome"),
@@ -42,8 +46,8 @@ def novo():
         )
         db.session.add(novo)
         db.session.commit()
-        flash("Funcionário cadastrado com sucesso!", "success")
-        return redirect(url_for("funcionarios.listar")) # Redireciona para a lista
+        flash("Colaborador cadastrado (via formulário rápido)!", "success")
+        return redirect(url_for("funcionarios.listar"))
 
     return render_template("funcionario_form.html", funcionario=None)
 
@@ -51,7 +55,6 @@ def novo():
 @funcionarios_bp.route("/funcionarios/editar/<int:id>", methods=["GET", "POST"])
 @login_required
 def editar_funcionario(id):
-    # --- AQUI ESTAVA O ERRO DE INDENTAÇÃO ---
     f = Funcionarios.query.get_or_404(id)
 
     if request.method == "POST":
@@ -61,16 +64,14 @@ def editar_funcionario(id):
         f.email = request.form.get("email")
         
         db.session.commit()
-        flash("Funcionário atualizado com sucesso!", "success")
-        return redirect(url_for("dashboard.dashboard")) # Redireciona ao Dashboard
+        flash("Colaborador atualizado com sucesso!", "success")
+        return redirect(url_for("funcionarios.listar"))
 
-    # --- LÓGICA DE CORREÇÃO (para o 'desc' is undefined) ---
     checklists_hist = f.checklists.order_by(desc('created_at')).all()
-    # --------------------------------------------------------
 
     return render_template("funcionario_form.html", 
                            funcionario=f,
-                           checklists_hist=checklists_hist) # <-- Envia a lista
+                           checklists_hist=checklists_hist)
 
 
 @funcionarios_bp.route("/funcionarios/excluir/<int:id>", methods=["GET", "POST"])
@@ -81,7 +82,7 @@ def excluir_funcionario(id):
     if request.method == "POST":
         db.session.delete(f)
         db.session.commit()
-        flash("Funcionário excluído com sucesso!", "danger")
+        flash("Colaborador excluído permanentemente!", "danger")
         return redirect(url_for("funcionarios.listar"))
 
     return render_template("funcionario_delete.html", funcionario=f)

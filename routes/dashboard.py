@@ -10,39 +10,34 @@ dashboard_bp = Blueprint('dashboard', __name__)
 @dashboard_bp.route("/dashboard")
 @login_required
 def dashboard():
-    # --- 1. TOTAIS GERAIS ---
-    total_funcionarios = Funcionarios.query.count()
+    # --- 1. TOTAIS E CONTADORES GERAIS ---
+    total_funcionarios = Funcionarios.query.filter(Funcionarios.status != 'Desligado').count()
     total_equipamentos = Equipamento.query.count()
     
-    # --- 2. ESTOQUE (Disponível vs Em Uso) ---
-    # Conta equipamentos agrupados por Tipo e Status
-    # Ex: Notebook: 10 (Disp), 50 (Em uso)
+    # --- 2. MONITOR DE ESTOQUE POR TIPO ---
+    TIPOS_ESTOQUE = ['Notebook', 'Desktop', 'Monitor', 'Fone', 'Teclado']
+    
     estoque_query = db.session.query(
         Equipamento.tipo,
         Equipamento.status,
         func.count(Equipamento.id)
-    ).group_by(Equipamento.tipo, Equipamento.status).all()
+    ).filter(Equipamento.tipo.in_(TIPOS_ESTOQUE)).group_by(Equipamento.tipo, Equipamento.status).all()
 
-    # Processa os dados para ficar fácil no HTML
-    # Formato final: {'Notebook': {'total': 60, 'livre': 10}, ...}
-    estoque = {}
+    estoque = {tipo: {'total': 0, 'disponivel': 0, 'em_uso': 0} for tipo in TIPOS_ESTOQUE}
+    
     for tipo, status, count in estoque_query:
-        tipo = tipo or "Outros" # Trata nulos
-        if tipo not in estoque:
-            estoque[tipo] = {'total': 0, 'disponivel': 0, 'em_uso': 0}
-        
-        estoque[tipo]['total'] += count
-        if status == 'Disponível':
-            estoque[tipo]['disponivel'] += count
-        else:
-            estoque[tipo]['em_uso'] += count
+        if tipo in estoque:
+            estoque[tipo]['total'] += count
+            if status == 'Disponível':
+                estoque[tipo]['disponivel'] += count
+            else:
+                estoque[tipo]['em_uso'] += count
 
-    # --- 3. EQUIPAMENTOS POR SETOR (Top 5) ---
-    # Quem tem mais equipamentos?
+    # --- 3. COLABORADORES POR DEPARTAMENTO (TOP 5) ---
     setor_query = db.session.query(
         Funcionarios.setor,
-        func.count(Equipamento.id)
-    ).join(Equipamento).group_by(Funcionarios.setor).order_by(func.count(Equipamento.id).desc()).limit(5).all()
+        func.count(Funcionarios.id)
+    ).filter(Funcionarios.status == 'Ativo').group_by(Funcionarios.setor).order_by(func.count(Funcionarios.id).desc()).limit(5).all()
 
     return render_template("dashboard.html",
                            total_funcionarios=total_funcionarios,
