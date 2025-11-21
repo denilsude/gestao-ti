@@ -1,0 +1,20 @@
+/* --- SOLUÇÃO DEFINITIVA DE CENTRALIZAÇÃO --- */
+.login-overlay {
+    position: fixed;      /* Fica fixo na tela, por cima de tudo */
+    top: 0;
+    left: 0;
+    width: 100vw;         /* 100% da largura da janela */
+    height: 100vh;        /* 100% da altura da janela */
+    
+    /* Fundo Claro (O que você escolheu) */
+    background-color: #f4f7f6;
+    background-image: linear-gradient(135deg, #e0f7fa 0%, #ffffff 100%);
+    
+    /* Centralização Perfeita */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    z-index: 99999;       /* Garante que fique na frente de qualquer menu */
+    overflow: hidden;
+}

@@ -49,5 +49,5 @@ app = create_app()
 
 
 if __name__ == "__main__":
-    # AQUI ESTAVA O ERRO: Adicionei os 4 espaços abaixo
-    app.run(debug=True)
+    
+    app.run(host="0.0.0.0", port=5000, debug=True)

@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:14-alpine
+    restart: always
+    environment:
+      POSTGRES_DB: gestaoti_db
+      POSTGRES_USER: gestaoti_user
+      POSTGRES_PASSWORD: sua_senha_forte_e_unica # <-- TROQUE ESTA SENHA!
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    
+  web:
+    build: .
+    restart: always
+    command: python app.py
+    volumes:
+      - .:/app
+    ports:
+      - "5000:5000"
+    environment:
+      # Variável de ambiente que aponta para o banco de dados 'db'
+      DATABASE_URL: postgresql://gestaoti_user:sua_senha_forte_e_unica@db:5432/gestaoti_db # <-- TROQUE ESTA SENHA!
+      SECRET_KEY: chave_muito_segura_para_o_ambiente_docker
+    depends_on:
+      - db
+    
+volumes:
+  postgres_data:

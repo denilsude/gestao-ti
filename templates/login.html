@@ -1,36 +1,59 @@
 {% extends "base.html" %}
 
-{# --- TRUQUE: Sobrescreve o bloco de mensagens do base.html com VAZIO --- #}
-{% block messages %}{% endblock %}
-
 {% block content %}
-<div class="login-container">
-  <div class="login-card">
-    <h2 class="text-center">Entrar</h2>
-    
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        {% for category, message in messages %}
-          {% if category == 'danger' %}
-            <div class="alert alert-danger" role="alert">
-              {{ message }}
-            </div>
-          {% endif %}
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
 
-    <form method="POST">
-        <div class="mb-3">
-          <label for="username" class="form-label">Usuário</label>
-          <input type="text" class="form-control" id="username" name="username" required>
+<div class="login-overlay">
+    
+    <div class="card shadow-lg border-0 fade-in" style="width: 100%; max-width: 380px; border-radius: 12px;">
+        
+        <div class="card-header text-center bg-white border-0 pt-4 pb-0">
+            <img src="{{ url_for('static', filename='images/logo-full.png') }}" alt="Sicoob" style="height: 45px;" class="mb-2 img-fluid">
+            <h4 class="fw-bold mb-0" style="color: #003641;">Gestão TI</h4>
+            <small class="text-muted">Acesso ao Sistema</small>
         </div>
-        <div class="mb-3">
-          <label for="password" class="form-label">Senha</label>
-          <input type="password" class="form-control" id="password" name="password" required>
+
+        <div class="card-body p-4">
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        {% if category == 'danger' %}
+                            <div class="alert alert-danger py-2 fs-6 text-center mb-3 shadow-sm border-0">
+                                {{ message }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST">
+                <div class="mb-3">
+                    <label class="form-label fw-bold text-secondary small">USUÁRIO</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0"><i class="feather-user text-muted"></i></span>
+                        <input type="text" class="form-control bg-light border-start-0" name="username" placeholder="Ex: admin" required style="height: 45px;">
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label fw-bold text-secondary small">SENHA</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0"><i class="feather-lock text-muted"></i></span>
+                        <input type="password" class="form-control bg-light border-start-0" name="password" placeholder="••••••" required style="height: 45px;">
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn w-100 btn-lg fw-bold text-uppercase shadow-sm" 
+                        style="background-color: #003641; color: white; border: none; height: 50px; border-radius: 8px; transition: opacity 0.3s;">
+                    Acessar
+                </button>
+            </form>
         </div>
-        <button type="submit" class="btn btn-primary w-100">Acessar</button>
-    </form>
-  </div>
+        
+        <div class="card-footer text-center bg-white border-0 pb-4">
+            <small class="text-muted" style="font-size: 11px;">© 2025 Sicoob Credseguro</small>
+        </div>
+    </div>
+
 </div>
+
 {% endblock %}
